@@ -2,5 +2,5 @@
 #Your Discord Token here:
 TOKEN = ''
 
-#Your Discord Chanel Name here:
-CHANEL_NAME = ''
+#Your Discord Channel Name here:
+CHANNEL_NAME = ''
