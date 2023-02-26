@@ -9,8 +9,11 @@ from Scraper_Main import product_picture
 from Scraper_Main import stockx_url
 from Scraper_Main import restocks_url
 
-if not TOKEN or CHANNEL_NAME:
-    raise ValueError("The BOt-Token or Channel-name was not included in the config.py file")
+if not TOKEN:
+    raise ValueError("The BOt-Token was not included in the config.py file")
+
+if not CHANNEL_NAME:
+    raise ValueError("The Channel-name was not included in the config.py file")
 
 hypeboost_preise = Scraper_Main.product_search
 product_url = Scraper_Main.product_url
