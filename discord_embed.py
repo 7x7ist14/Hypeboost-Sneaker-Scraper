@@ -1,7 +1,7 @@
 import discord
 import config
 import Scraper_Main
-from config import TOKEN, CHANEL_NAME
+from config import TOKEN, CHANNEL_NAME
 from discord.ext import commands
 from Scraper_Main import product_url
 from Scraper_Main import product_title
@@ -9,6 +9,8 @@ from Scraper_Main import product_picture
 from Scraper_Main import stockx_url
 from Scraper_Main import restocks_url
 
+if not TOKEN or CHANNEL_NAME:
+    raise ValueError("The BOt-Token or Channel-name was not included in the config.py file")
 
 hypeboost_preise = Scraper_Main.product_search
 product_url = Scraper_Main.product_url
@@ -31,7 +33,7 @@ async def on_message(message):
       return
   message_content = message.content.lower()
 
-  if message.channel.name == CHANEL_NAME:
+  if message.channel.name == CHANNEL_NAME:
     if message.content.startswith(f'$scrape'): #(Prefix "§") keyword for scraping
 
       if f'$scrape' in message_content:
