@@ -34,7 +34,7 @@ At the bottom of the discord message you can also find the StockX and Restocks P
 
 
 
-# Notes
+# Notes:
 This is my first Github Project and the code might not be the best or the simplest,
 if you have any questions just ask them and i will try to help.
 
