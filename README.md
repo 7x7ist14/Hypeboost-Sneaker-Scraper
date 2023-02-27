@@ -11,13 +11,12 @@ A Product Photo is also added to the return message.
 # How to use:
 
 1. Check or install following libraries:
+   to install them just write the pip install... in your Terminal
 
 + requests (pip install requests)
 + json (pip install json)
 + BeautifulSoup (pip install beautifulsoup4)
 + Discord (pip install discord.py)
-
-to install them just write the pip install... in your Terminal
 
 
 
