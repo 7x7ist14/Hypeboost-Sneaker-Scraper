@@ -19,6 +19,8 @@ A Product Photo is also added to the return message.
 
 to install them just write the pip install... in your Terminal
 
+
+
 2. Open "Config" file and input your Discord Bot Token and the name of the channel were you want to use the scraper in.
 
 
