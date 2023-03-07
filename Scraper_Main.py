@@ -114,3 +114,26 @@ def product_picture(product_url_output):
 
   print('Scraped image!')
   return image
+
+def sneakit_product_url(SKU):
+  raw = sneakit_info(SKU)
+  slug = raw['data'][0]['slug']
+  p_url = "https://sneakit.com/product/" + slug
+  print("Scraped Sneakit Product URL:" + p_url)
+  return p_url
+
+
+def sneakit_info(SKU):
+  sneakit_url_r = sneakit_url(SKU)
+  r = requests.get(sneakit_url_r)
+  global output
+  output = json.loads(r.text)
+  print("Scraped Sneakit info!")
+  return output
+
+def sneakit_url(SKU):
+  produkt_code = SKU
+  global url
+  url = f"https://sneakit.com/search/products/{produkt_code}?query={produkt_code}&page=1"
+  print("Scraped Sneakit URL!", url)
+  return url
