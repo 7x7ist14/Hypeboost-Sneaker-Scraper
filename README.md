@@ -25,13 +25,14 @@ A Product Photo is also added to the return message.
 
 3. Open and run the "discord_embed" file. (best for this is VS-Code in my opinion)
 
-4. Write the keyword ($scrape) + SKU in your discord server (you have to write the message in the same channel that you added to the config file!)
-   format: $scrape SKU --> (example: $scrape CW1590-100)
+4. Write the keyword ($hypeboost) + SKU in your discord server (you have to write the message in the same channel that you added to the config file!)
+   format: $hypeboost SKU --> (example: $hypeboost CW1590-100)
+   --> the command is also changeable in the config file if you want to change it
 
 
 The Scraper will now send you all listed sizes and their prices in the discord channel.
 Also the Hypeboost Product URL is in the blue title.
-At the bottom of the discord message you can also find the StockX and Restocks Product URL to the Scraped Product.
+At the bottom of the discord message you can also find the StockX, Hypeboost, Sneakit, GOAT and Restocks Product URL to the Scraped Product.
 
 
 
@@ -47,4 +48,5 @@ The return message looks like this:
 
 
 
-![image](https://user-images.githubusercontent.com/103487648/223548160-86535b5f-da98-42d7-932c-275fb2121318.png)
+![image](https://user-images.githubusercontent.com/103487648/224489952-e95f860c-2228-41da-92a7-962143388034.png)
+
