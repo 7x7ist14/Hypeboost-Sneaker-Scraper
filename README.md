@@ -10,14 +10,15 @@ A Product Photo is also added to the return message.
 
 # How to use:
 
-1. Check or install following libraries:
+1. Requirements:
 
-+ requests (pip install requests)
-+ json (pip install json)
-+ BeautifulSoup (pip install beautifulsoup4)
-+ Discord (pip install discord.py)
+Check if you have all the needed Python libraries.
 
---> to install them just write the pip install... in your Terminal
+-->To install all needed libraries just do this:
++ open the folder that contains all files (the folder name should be "Hypeboost-Sneaker-Scraper") in your file Explorer.
++ click on the path and write "cmd" --> now press enter
++ you should now see a cmd window, you just have to type "pip install -r requirements.txt" 
++ all needed libraries should now be installed and your good to go :)
 
 
 2. Open "Config" file and input your Discord Bot Token and the name of the channel were you want to use the scraper in.
