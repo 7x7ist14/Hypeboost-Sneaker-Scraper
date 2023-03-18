@@ -3,11 +3,7 @@ import config
 import Scraper_Main
 from config import TOKEN, CHANNEL_NAME, COMMAND_PREFIX
 from discord.ext import commands
-from Scraper_Main import product_url
-from Scraper_Main import product_title
-from Scraper_Main import product_picture
-from Scraper_Main import stockx_url
-from Scraper_Main import restocks_url
+from Scraper_Main import *
 
 if not TOKEN:
     raise ValueError("The BOt-Token was not included in the config.py file")
@@ -60,7 +56,7 @@ async def on_message(message):
           embed = discord.Embed(
             title=product_title_output,
             url=product_url_output,
-            color=0x1abc9c
+            color=0x206694
           )
           embed.set_author(
             name="HypeBoost Scraper",
@@ -85,5 +81,7 @@ async def on_message(message):
           await message.channel.send(embed=embed) #sends sizes in discord chat
           print('Scraping Successful!')
 
+    else:
+      await message.channel.send("wrong command used!")
 
 bot.run(TOKEN)
