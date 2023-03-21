@@ -1,31 +1,38 @@
 import discord
-import main
+import config
 import datetime
-from discord.ext import commands
+import Scraper_Main
 from config import TOKEN, CHANNEL_NAME, COMMAND_PREFIX
-
-product_title = main.hypeboost_product_title
-product_picture = main.product_picture
-hypeboost_sizes = main.hypeboost_prices
-hypeboost_product_url = main.hypeboost_product_url
-stockx_product_url = main.stockx_url
-restocks_product_url = main.restocks_url
-goat_product_url = main.product_goat
+from discord.ext import commands
+from Scraper_Main import product_url
+from Scraper_Main import product_title
+from Scraper_Main import product_picture
+from Scraper_Main import stockx_url
+from Scraper_Main import restocks_url
 
 if not TOKEN:
-    raise ValueError("The Bot-Token was not included in the config.py file")
+    raise ValueError("The BOt-Token was not included in the config.py file")
 
 if not CHANNEL_NAME:
-    raise ValueError("The Channel-Name was not included in the config.py file")
+    raise ValueError("The Channel-name was not included in the config.py file")
 
 if not COMMAND_PREFIX:
-    raise ValueError("The Command-Prefix was not included in the config.py file")
+    raise ValueError("The command-prefix was not included in the config.py file")
+
+
+hypeboost_preise = Scraper_Main.product_search
+product_url = Scraper_Main.product_url
+product_title = Scraper_Main.product_title
+product_picture = Scraper_Main.product_picture
+stockx_url = Scraper_Main.stockx_url
+restocks_url = Scraper_Main.restocks_url
+goat_url = Scraper_Main.product_goat
 
 bot = commands.Bot(command_prefix=COMMAND_PREFIX, intents=discord.Intents.all())
 
 @bot.event
 async def on_ready():
-    await bot.change_presence(status=discord.Status.online, activity=discord.Game('Scraping! (Payout Hypeboost)'))
+    await bot.change_presence(status=discord.Status.online, activity=discord.Game('Scraping!'))
     print("Bot logged in!")
 
 
@@ -36,52 +43,46 @@ async def on_message(message):
   message_content = message.content.lower()
 
   if message.channel.name == CHANNEL_NAME:
-    if message.content.startswith(COMMAND_PREFIX):
+    if message.content.startswith(COMMAND_PREFIX): #(Prefix "§") keyword for scraping
       await message.channel.send("Scraping...")
 
       if COMMAND_PREFIX in message_content:
-        SKU_raw = message_content.replace(COMMAND_PREFIX, '')
-        SKU = SKU_raw.replace(" ", "")
-        product_title_output = product_title(SKU)
-        product_picture_output = product_picture(SKU)
-        hypeboost_sizes_output = hypeboost_sizes(SKU)
-        hypeboost_product_url_output = hypeboost_product_url(SKU)
-        stockx_product_url_output = stockx_product_url(SKU)
-        restocks_product_url_output = restocks_product_url(SKU)
-        goat_product_url_output = goat_product_url(SKU)
-
-        embed = discord.Embed(
-          title=product_title_output,
-          url=hypeboost_product_url_output,
-          color=0x3498db
-        )
-        embed.set_author(
-          name="Hypeboost Payout Scraper",
-          url="https://twitter.com/jakobaio",
-          icon_url= "https://consumersiteimages.trustpilot.net/business-units/610a587f2b259a001d8d9b5f-198x149-1x.jpg"
+          SKU_raw = message_content.replace(COMMAND_PREFIX, '')
+          SKU = SKU_raw.replace(" ", "")
+          hypeboost_sizes = hypeboost_preise(SKU) #SKU used for scraping
+          product_url_output = product_url(SKU)
+          product_title_output = product_title(product_url_output)
+          product_picture_output = product_picture(product_url_output)
+          stockx_url_output = stockx_url(SKU)
+          restocks_url_output = restocks_url(SKU)
+          goat_url_output = goat_url(SKU)
+          embed = discord.Embed(
+            title=product_title_output,
+            url=product_url_output,
+            color=0x1abc9c
           )
-        embed.set_thumbnail(
-          url=product_picture_output
-        )
-        embed.add_field(
-          name="Payout Prices:",
-          value=hypeboost_sizes_output
-        )
-        embed.set_footer(
-          text="Developed by Jakob.AIO"
-        )
-        embed.add_field(
-          name="Open Product on:",
-          value=f"[[StockX]]({stockx_product_url_output})      " f"[[Restocks]]({restocks_product_url_output})      " f"[[Hypeboost]]({hypeboost_product_url_output})      " f"[[GOAT]]({goat_product_url_output})      ",
-          inline=False
-        )
-        embed.set_footer(
-          text=f"Developed by JakobAIO      |      Hypeboost-Payout      |      {datetime.datetime.now().strftime('%H:%M:%S')}"
-        )
-
-        await message.channel.send(embed=embed)
-        print('Payout Scraping Successful!')
+          embed.set_author(
+            name="HypeBoost Scraper",
+            url="https://twitter.com/jakobaio",
+            icon_url= "https://consumersiteimages.trustpilot.net/business-units/610a587f2b259a001d8d9b5f-198x149-1x.jpg"
+            )
+          embed.set_thumbnail(
+            url=product_picture_output
+          )
+          embed.add_field(
+            name="Prices:",
+            value=hypeboost_sizes
+          )
+          embed.add_field(
+            name="Open Product on:",
+            value=f"[[StockX]]({stockx_url_output})      " f"[[Restocks]]({restocks_url_output})      " f"[[Hypeboost]]({product_url_output})      " f"[[GOAT]]({goat_url_output})      ",
+            inline=False
+          )
+          embed.set_footer(
+            text=f"Developed by JakobAIO      |      Hypeboost-Scraper      |      {datetime.datetime.now().strftime('%H:%M:%S')}"
+          )
+          await message.channel.send(embed=embed) #sends sizes in discord chat
+          print('Scraping Successful!')
 
 
 bot.run(TOKEN)
-c
