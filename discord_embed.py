@@ -1,14 +1,9 @@
 import discord
-import config
 import datetime
 import Scraper_Main
 from config import TOKEN, CHANNEL_NAME, COMMAND_PREFIX
 from discord.ext import commands
-from Scraper_Main import product_url
-from Scraper_Main import product_title
-from Scraper_Main import product_picture
-from Scraper_Main import stockx_url
-from Scraper_Main import restocks_url
+
 
 if not TOKEN:
     raise ValueError("The BOt-Token was not included in the config.py file")
@@ -27,6 +22,7 @@ product_picture = Scraper_Main.product_picture
 stockx_url = Scraper_Main.stockx_url
 restocks_url = Scraper_Main.restocks_url
 goat_url = Scraper_Main.product_goat
+sneakit_product_url = Scraper_Main.sneakit_product_url
 
 bot = commands.Bot(command_prefix=COMMAND_PREFIX, intents=discord.Intents.all())
 
@@ -56,6 +52,7 @@ async def on_message(message):
           stockx_url_output = stockx_url(SKU)
           restocks_url_output = restocks_url(SKU)
           goat_url_output = goat_url(SKU)
+          sneakit_product_url_output = sneakit_product_url(SKU)
           embed = discord.Embed(
             title=product_title_output,
             url=product_url_output,
@@ -75,7 +72,7 @@ async def on_message(message):
           )
           embed.add_field(
             name="Open Product on:",
-            value=f"[[StockX]]({stockx_url_output})      " f"[[Restocks]]({restocks_url_output})      " f"[[Hypeboost]]({product_url_output})      " f"[[GOAT]]({goat_url_output})      ",
+            value=f"[[StockX]]({stockx_url_output})      " f"[[Restocks]]({restocks_url_output})      " f"[[Hypeboost]]({product_url_output})      " f"[[GOAT]]({goat_url_output})      " f"[[Sneakit]]({sneakit_product_url_output})      ",
             inline=False
           )
           embed.set_footer(
@@ -84,5 +81,7 @@ async def on_message(message):
           await message.channel.send(embed=embed) #sends sizes in discord chat
           print('Scraping Successful!')
 
+      else:
+        await message.channel.send("***Wrong command used!***")
 
 bot.run(TOKEN)
