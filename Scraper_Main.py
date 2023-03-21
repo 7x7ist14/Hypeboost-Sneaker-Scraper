@@ -1,52 +1,65 @@
-import json
 import requests
+import json
 from bs4 import BeautifulSoup
 
-
-def hypeboost_product_url(SKU):
-    url = "https://hypeboost.com/en/search/shop?keyword=" + SKU
-    r = requests.get(url)
-    soup = BeautifulSoup(r.content, 'html.parser')
-
-    for a in soup.find_all('a', href=True):
-        print("Product URL:", a['href'])
-    url2 = a['href']
-    return url2
-
-
-def hypeboost_prices(SKU):
-    url = hypeboost_product_url(SKU)
-    r = requests.get(url)
-    soup = BeautifulSoup(r.text, 'html.parser')
-    sizes = soup.find_all('div', class_='size')
-    output = ""
-
-    for size in sizes:
-        label = size.find('div', class_='label').text.strip()
-        if 'data-price' in size.attrs:
-            price = size['data-price']
-            price = price.replace('\xa0', '')
-            price = price.replace(' ', '')
-            price = price.replace('€', '') + '€'
-        else:
-            price = 'OOS!'
-        output += label.replace(' ', '') + ': ' + price + "\n"
-    print("Scraped Payout Prices!")
-    return output
-#print(hypeboost_prices("DV3742-021"))
-
-def hypeboost_product_title(SKU):
-  hypeboost_product_url_r = hypeboost_product_url(SKU)
+def product_search(SKU):
+  url = "https://hypeboost.com/en/search/shop?keyword=" + SKU
   headers = {
       "cookie": "country=eyJpdiI6ImlCRDJaRExPQkZYNTNlMmM0OWFEQVE9PSIsInZhbHVlIjoiTFRaRW01UW5wNUY2RjZnQzViWGlPYWRtYVRmbmxxMXpoRjNzODlZZUdIZmNLWjZSTFp0Q3htbTFuYUF4ZGkwVSIsIm1hYyI6IjQ0MzBlZTdkZmNhYjVhYmJhMDAzNDhlNjQ3MGU5NzQ1YThkOTk0ZDRkNzYxZGQzYzg0ODI0ZWYzZWZhODBlZGYiLCJ0YWciOiIifQ%253D%253D; currency=eyJpdiI6ImFlbkxaNHJyOHdUZlJFRlJ2dGlna0E9PSIsInZhbHVlIjoieEx2OE01VHhzOGZ1eFdsM09IVDFIZmR6R1hieHpDRDZScWoweVhqTDZjUzY2a3FFUmhQZGdPV2piaFN3OTViTCIsIm1hYyI6IjgzMTY0NDExNzljYjM1MzFmZmM5ZTBhOGY0MjU3ZWViMjA2NjBjYmUwMjg0MDFkMmUyYmJiNTVjYTUxZTk5MjMiLCJ0YWciOiIifQ%253D%253D",
       "Content-Type": "application/json"
   }
-  response = requests.request("GET", hypeboost_product_url_r, headers=headers)
+
+  response = requests.request("GET", url, headers=headers)
+
+  soup = BeautifulSoup(response.content, 'html.parser')
+  for a in soup.find_all('a', href=True):
+    print("Product URL:", a['href'])
+
+  response_url = requests.get(a['href'])
+
+  soup2 = BeautifulSoup(response_url.text, 'html.parser')
+
+  sizes = []
+  for size_elem in soup2.select('.size'):
+      if 'available' in size_elem['class']:
+          label = size_elem.select_one('.label').text
+          price = size_elem.select_one('.price span').text.strip()
+          sizes.append(f"{label}: {price}")
+      elif 'sold-out' in size_elem['class']:
+          label = size_elem.select_one('.label').text
+          sizes.append(f"{label}: OOS!")
+
+  output = "\n".join(element.replace(" €", "€").replace(" ½", "½") for element in sizes)
+  print("Sizes & Prices Scraped!")
+  return output
+
+def product_title(product_url_output):
+  headers = {
+      "cookie": "country=eyJpdiI6ImlCRDJaRExPQkZYNTNlMmM0OWFEQVE9PSIsInZhbHVlIjoiTFRaRW01UW5wNUY2RjZnQzViWGlPYWRtYVRmbmxxMXpoRjNzODlZZUdIZmNLWjZSTFp0Q3htbTFuYUF4ZGkwVSIsIm1hYyI6IjQ0MzBlZTdkZmNhYjVhYmJhMDAzNDhlNjQ3MGU5NzQ1YThkOTk0ZDRkNzYxZGQzYzg0ODI0ZWYzZWZhODBlZGYiLCJ0YWciOiIifQ%253D%253D; currency=eyJpdiI6ImFlbkxaNHJyOHdUZlJFRlJ2dGlna0E9PSIsInZhbHVlIjoieEx2OE01VHhzOGZ1eFdsM09IVDFIZmR6R1hieHpDRDZScWoweVhqTDZjUzY2a3FFUmhQZGdPV2piaFN3OTViTCIsIm1hYyI6IjgzMTY0NDExNzljYjM1MzFmZmM5ZTBhOGY0MjU3ZWViMjA2NjBjYmUwMjg0MDFkMmUyYmJiNTVjYTUxZTk5MjMiLCJ0YWciOiIifQ%253D%253D",
+      "Content-Type": "application/json"
+  }
+  response = requests.request("GET", product_url_output, headers=headers)
   soup = BeautifulSoup(response.content, 'html.parser')
   title = soup.find('h1')
   title_text = title.get_text()
-  print('Scraped Product title!')
+  print('Scraped title!')
   return title_text
+
+def product_url(SKU):
+  url = "https://hypeboost.com/en/search/shop?keyword=" + SKU
+
+  headers = {
+      "cookie": "country=eyJpdiI6ImlCRDJaRExPQkZYNTNlMmM0OWFEQVE9PSIsInZhbHVlIjoiTFRaRW01UW5wNUY2RjZnQzViWGlPYWRtYVRmbmxxMXpoRjNzODlZZUdIZmNLWjZSTFp0Q3htbTFuYUF4ZGkwVSIsIm1hYyI6IjQ0MzBlZTdkZmNhYjVhYmJhMDAzNDhlNjQ3MGU5NzQ1YThkOTk0ZDRkNzYxZGQzYzg0ODI0ZWYzZWZhODBlZGYiLCJ0YWciOiIifQ%253D%253D; currency=eyJpdiI6ImFlbkxaNHJyOHdUZlJFRlJ2dGlna0E9PSIsInZhbHVlIjoieEx2OE01VHhzOGZ1eFdsM09IVDFIZmR6R1hieHpDRDZScWoweVhqTDZjUzY2a3FFUmhQZGdPV2piaFN3OTViTCIsIm1hYyI6IjgzMTY0NDExNzljYjM1MzFmZmM5ZTBhOGY0MjU3ZWViMjA2NjBjYmUwMjg0MDFkMmUyYmJiNTVjYTUxZTk5MjMiLCJ0YWciOiIifQ%253D%253D",
+      "Content-Type": "application/json"
+  }
+
+  response = requests.request("GET", url, headers=headers)
+
+  soup = BeautifulSoup(response.content, 'html.parser')
+
+  for a in soup.find_all('a', href=True):
+    print('Scraped product url!')
+    return a['href']
 
 def stockx_url(SKU):
   url = "https://stockx.com/api/browse?_search=" + SKU
@@ -88,14 +101,12 @@ def restocks_url(SKU):
   print('Scraped Restocks URL: ' + product_url)
   return product_url
 
-
-def product_picture(SKU):
-  hypeboost_product_url_output = hypeboost_product_url(SKU)
+def product_picture(product_url_output):
   headers = {
       "cookie": "country=eyJpdiI6ImlCRDJaRExPQkZYNTNlMmM0OWFEQVE9PSIsInZhbHVlIjoiTFRaRW01UW5wNUY2RjZnQzViWGlPYWRtYVRmbmxxMXpoRjNzODlZZUdIZmNLWjZSTFp0Q3htbTFuYUF4ZGkwVSIsIm1hYyI6IjQ0MzBlZTdkZmNhYjVhYmJhMDAzNDhlNjQ3MGU5NzQ1YThkOTk0ZDRkNzYxZGQzYzg0ODI0ZWYzZWZhODBlZGYiLCJ0YWciOiIifQ%253D%253D; currency=eyJpdiI6ImFlbkxaNHJyOHdUZlJFRlJ2dGlna0E9PSIsInZhbHVlIjoieEx2OE01VHhzOGZ1eFdsM09IVDFIZmR6R1hieHpDRDZScWoweVhqTDZjUzY2a3FFUmhQZGdPV2piaFN3OTViTCIsIm1hYyI6IjgzMTY0NDExNzljYjM1MzFmZmM5ZTBhOGY0MjU3ZWViMjA2NjBjYmUwMjg0MDFkMmUyYmJiNTVjYTUxZTk5MjMiLCJ0YWciOiIifQ%253D%253D",
       "Content-Type": "application/json"
   }
-  response = requests.request("GET", hypeboost_product_url_output, headers=headers)
+  response = requests.request("GET", product_url_output, headers=headers)
   soup = BeautifulSoup(response.content, 'html.parser')
 
   pictures = soup.find("div", class_ = "item")
@@ -128,5 +139,4 @@ def product_goat(SKU):
   output = json.loads(response.text)
   output_slug = output['response']['results'][0]['data']['slug']
   product_url = "https://www.goat.com/sneakers/" + output_slug
-  print("Scraped GOAT product URL!")
   return product_url
