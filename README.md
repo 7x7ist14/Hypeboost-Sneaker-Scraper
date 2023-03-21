@@ -47,6 +47,7 @@ if you have any questions just ask them and i will try to help.
 # Return Message Example:
 The return message looks like this:
 
+Sneakit urls removed for now.
 
 
 ![image](https://user-images.githubusercontent.com/103487648/224489952-e95f860c-2228-41da-92a7-962143388034.png)
